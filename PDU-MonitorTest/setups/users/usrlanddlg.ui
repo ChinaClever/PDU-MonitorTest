@@ -51,7 +51,6 @@
     <font>
      <family>Arial</family>
      <pointsize>12</pointsize>
-     <weight>50</weight>
      <bold>false</bold>
     </font>
    </property>
@@ -71,7 +70,6 @@
    <property name="font">
     <font>
      <family>Arial</family>
-     <weight>50</weight>
      <bold>false</bold>
     </font>
    </property>
@@ -170,7 +168,6 @@
     <font>
      <family>微软雅黑</family>
      <pointsize>24</pointsize>
-     <weight>50</weight>
      <bold>false</bold>
     </font>
    </property>
@@ -178,7 +175,7 @@
     <string notr="true"/>
    </property>
    <property name="text">
-    <string>PDU质检平台</string>
+    <string>PDU生产自动质检平台</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
