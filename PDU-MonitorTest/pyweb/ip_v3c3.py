@@ -51,6 +51,10 @@ class IpV3C3(IpWeb):
         self.driver.switch_to.default_content()
         self.itemCheck("language", int(cfg['language']), '语言选择')
         self.itemCheck("lcdled", cfg['lines'], '相数选择')
+        choice = 0
+        if(int(cfg['cur_max']) >= 500 and int(cfg['lines']) != 2):
+            choice = 1
+        self.itemCheck("choiceA", choice , '32A/63A选择')
         self.macAddrCheck()
         
         self.driver.back(); time.sleep(1)

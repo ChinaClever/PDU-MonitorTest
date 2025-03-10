@@ -4,7 +4,7 @@ import datetime
 class IpV3BYTE(IpWeb):
 
     def start_fun(self):
-        #self.ip_prefix = 'https://'
+        self.ip_prefix = 'https://'
         self.login()
         self.setEle()
         self.checkIpv3ByteCur()
@@ -77,7 +77,7 @@ class IpV3BYTE(IpWeb):
         self.itemCheck("standard", cfg['standard'], '中性/标准选择')
         self.itemCheck("Log_flag", cfg['log_en'], '日志功能设置')
         index = 0
-        if(int(cfg['cur_max']) == 63):
+        if(int(cfg['cur_max']) == 630 and int(cfg['lines']) != 2):
             index = 1
         self.itemCheck("choiceA", index , '32A/63A选择')
         self.macAddrCheck()

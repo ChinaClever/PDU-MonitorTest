@@ -45,7 +45,7 @@ class IpWeb:
 
     def initCfg(self):
         items = IpWeb.getCfg().items("ipCfg")  # 获取section名为Mysql-Database所对应的全部键值对
-        self.cfgs = {'version':1, 'sw_ver': '','ip_addr': '192.168.1.163', 'ac':1, 'log_en':0, 'security':0,'lcd':0,'ip_infirst': 'IEC309', 'ip_insecond': '18A', 'ip_outfirst': '20xC13', 'ip_outsecond': '4xC19', 'protocol':0 , 'lcd_switch':1,'maccheck':1}
+        self.cfgs = {'version':1, 'sw_ver': '','ip_addr': '192.168.1.163', 'ac':1, 'log_en':0, 'security':0,'lcd':0,'ip_bytepassword': 0 ,'ip_infirst': 'IEC309', 'ip_insecond': '18A', 'ip_outfirst': '20xC13', 'ip_outsecond': '4xC19', 'protocol':0 , 'lcd_switch':1,'maccheck':1,'language':1,'transformer':1}
         for it in items:
             self.cfgs[it[0]] = it[1]
             
@@ -93,6 +93,14 @@ class IpWeb:
         ip = self.ip_prefix + self.cfgs['ip'] + '/index.html'
         user = self.cfgs['user'] = 'abcd123'
         pwd = self.cfgs['pwd'] = 'abcd123'
+        bytepassword = int(self.cfgs['ip_bytepassword'])
+        ret = False
+        ret1 = False
+        ret2 = False
+        ret3 = False
+        if(int(self.cfgs['version'])==10):
+            user = self.cfgs['user'] = 'admin123'
+            pwd = self.cfgs['pwd'] = 'admin123'
         self.driver.get(ip); time.sleep(3)
         try:
             self.setItById('old_pwd' , user)
@@ -103,13 +111,43 @@ class IpWeb:
         except:
             self.sendtoMainapp("创建测试账号失败", 1)
         finally:
-            self.driver.refresh(); time.sleep(1)
-            self.setItById("name", user)
-            self.setItById("psd", pwd)
-            self.execJs("login()");time.sleep(3)
+            try:
+                self.driver.refresh(); time.sleep(3)
+                self.setItById("name", user)
+                self.setItById("psd", pwd)
+                self.execJs("login()");time.sleep(2)
+                ret3 = True#能正常打开网页
+                self.driver.switch_to.alert.accept()
+                ret1 = True#将进入admin
+            except:
+                if(ret3 == True and ret1 == False):
+                    ret = True#正常
+                    self.sendtoMainapp("网页登陆成功", 1)
+                if(ret3 == True and ret1 == True):
+                    ret = False#密码异常
+                if(ret3 == False and ret1 == False):
+                    self.sendtoMainapp("网页登陆失败", 0)#找不到控件
+            finally:
+                try:
+                    if(ret3 == True and ret1 == True):
+                        time.sleep(0.5)
+                        user = self.cfgs['user'] = 'admin'
+                        pwd = self.cfgs['pwd'] = 'admin'
+                        self.driver.refresh(); time.sleep(3)
+                        self.setItById("name", user)
+                        self.setItById("psd", pwd)
+                        self.execJs("login()");time.sleep(2)
+                        time.sleep(1.2)
+                        ret2 = True#正常
+                        self.sendtoMainapp("网页登陆成功", 1)
+                except:
+                    if(ret2 == False):
+                        self.sendtoMainapp("网页登陆失败", 0)
+                finally:
+                    time.sleep(1.2)
 
     def inputAccount(self):
-        ip = self.ip_prefix + self.cfgs['ip'] + '/'
+        
         user = self.cfgs['user'] = 'admin'
         pwd = self.cfgs['pwd'] = 'admin'
         if(int(self.cfgs['version'])==5):
@@ -118,8 +156,18 @@ class IpWeb:
         elif(int(self.cfgs['version'])==7):
             user = self.cfgs['user'] = 'huawei'
             pwd = self.cfgs['pwd'] = 'huawei'
-        self.driver.get(ip); time.sleep(2.2)
+        elif(int(self.cfgs['version'])==10):
+            self.ip_prefix = 'https://'
+            user = self.cfgs['user'] = 'admin123'
+            pwd = self.cfgs['pwd'] = 'admin123'
+        elif(int(self.cfgs['version'])==11):
+            self.ip_prefix = 'https://'
+            user = self.cfgs['user'] = 'admin'
+            pwd = self.cfgs['pwd'] = 'admin'
+        
         try:
+            ip = self.ip_prefix + self.cfgs['ip'] + '/'
+            self.driver.get(ip); time.sleep(2.2)
             self.setItById("name", user)
             self.setItById("psd", pwd)
             self.execJs("login()")
@@ -133,14 +181,39 @@ class IpWeb:
         self.cfgs['ip'] = self.cfgs['ip_addr']
         security = int(self.cfgs['security'])
         v = int(self.cfgs['version'])
-        if(security and v != 9):
+        flag = int(self.cfgs['ip_bytepassword'])
+        password = True
+        if( v == 10 and flag == 0):
+            password = False
+        if( v == 11):
+            password = False
+        
+        if(security and v != 9 and password):
             self.createAccount()
         else:
             self.inputAccount()
+        time.sleep(2)
         self.verCheck()
 
     def checkEnv(self):
         self.divClick(2)
+        self.itemCheck("min7", 0, '温度最小值')
+        self.itemCheck("max7", 40, '温度最大值')
+        self.itemCheck("min8", 0, '湿度最小值')
+        self.itemCheck("max8", 99, '湿度最大值')
+        
+    def checkEnvIP6(self):
+        self.divClick(2)
+        ret = 1
+        tt = self.driver.find_element_by_id('tem').text
+        if(int(tt) == 0):
+                ret = 0
+        self.sendtoMainapp('检查温度当前值：'+tt+'℃', ret)
+        ret = 1
+        tt = self.driver.find_element_by_id('hum').text
+        if(int(tt) == 0):
+                ret = 0
+        self.sendtoMainapp('检查湿度当前值：'+tt+'%', ret)
         self.itemCheck("min7", 0, '温度最小值')
         self.itemCheck("max7", 40, '温度最大值')
         self.itemCheck("min8", 0, '湿度最小值')
@@ -281,7 +354,7 @@ class IpWeb:
         line = 3
         self.checkCur(line, curMin, curMax)
         self.checkVol(line, volMin, volMax)
-        self.checkEnv()
+        self.checkEnvIP6()
         self.sendtoMainapp("检查设备报警阈值成功", 1)
         
     def checkCur(self, lines, min, max):
@@ -310,9 +383,9 @@ class IpWeb:
         
     def checkIpv3ByteCur(self):
         p = '电流预警值'
-        min = self.cfgs['cur_min']
-        max = self.cfgs['cur_max']
-        lines = 3
+        min = int(self.cfgs['cur_min'])
+        max = int(self.cfgs['cur_max'])
+        lines = int(self.cfgs['lines'])
         self.divClick(2)
         size = lines
         if (size == 2):
@@ -321,5 +394,22 @@ class IpWeb:
             if (size == 2 and num == 2):
                 max = int((int(max) + 1) // 2)
             self.itemCheck("Lmax" + str(num), round(int(max)/10*0.8,1), p)
-        time.sleep(1.2)
+        time.sleep(2.2)
+        
+    def checkIpv3ECCCur(self):
+        p = '电流预警值'
+        min = int(self.cfgs['cur_min'])
+        max = int(self.cfgs['cur_max'])
+        size = int(self.cfgs['lines'])
+        lines = 1
+        self.divClick(2)
+        if (size == 2):
+            lines = 3
+        for num in range(1, lines + 1):
+            if (size == 2 and num == 2):
+                max = ((max + 10) // 2)
+            self.itemCheck("min" + str(num), min/10, p)
+            self.itemCheck("Lmax" + str(num), round(max/10*0.8,1), p)
+            self.itemCheck("max" + str(num), max/10, p)
+        time.sleep(2.2)
 

@@ -198,10 +198,10 @@ void Home_SetDlg::on_ipTypeBox_currentIndexChanged(int index)
     ui->label_11->setHidden(res);
     ui->logBox->setHidden(res);
 
-    res = false;
-    if(index == IP_PDUV6 - 2)  res = true;
-    ui->label_7->setHidden(res);
-    ui->lineBox->setHidden(res);
+//    res = false;
+//    if(index == IP_PDUV6 - 2)  res = true;
+//    ui->label_7->setHidden(res);
+//    ui->lineBox->setHidden(res);
 
     res = true;
     ui->label_14->setHidden(res);

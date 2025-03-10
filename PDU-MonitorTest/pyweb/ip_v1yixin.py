@@ -16,6 +16,10 @@ class IpV1YIXIN(IpWeb):
         self.driver.get(ip); time.sleep(1.1)
         self.driver.switch_to.default_content()
         self.itemCheck("language", int(cfg['language'])+1, '语言选择')
+        choice = 0
+        if(int(cfg['cur_max']) >= 500 and int(cfg['lines']) != 2):
+            choice = 1
+        self.itemCheck("choiceA", choice , '32A/63A选择')
         self.macAddrCheck()
         self.driver.back(); time.sleep(1)
         
