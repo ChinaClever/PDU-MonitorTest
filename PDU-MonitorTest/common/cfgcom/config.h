@@ -126,6 +126,10 @@ struct sCfgItem
     bool macprinter;
     uchar macCheck;
     QString sn;//成品序列号
+    int xCodeOffset;
+    int yCodeOffset;
+    int xMacOffset;
+    int yMacOffset;
 };
 
 
@@ -152,6 +156,8 @@ public:
     void writeErrData();
     void writeCfgDev();
     void setAddr(int addr);
+    void initOffset();
+    void writeOffset();
 
     void setCurrentNum();
     void write(const QString &key, const QVariant& v, const QString &g="Cfg");

@@ -21,13 +21,24 @@ void Home_PrintDlg::initFunSlot()
     Cfg::bulid()->initPrint();
     ui->printerCheck->setChecked(mItem->printer);
     ui->MACCheck->setChecked(mItem->macprinter);
+//    qDebug()<<mItem->xCodeOffset << " " <<mItem->yCodeOffset<< " " <<mItem->xMacOffset<< " " <<mItem->yMacOffset;
+    ui->CodeXlineEdit->setText(QString::number(mItem->xCodeOffset));
+    ui->CodeYlineEdit->setText(QString::number(mItem->yCodeOffset));
+    ui->MACXlineEdit->setText(QString::number(mItem->xMacOffset));
+    ui->MACYlineEdit->setText(QString::number(mItem->yMacOffset));
 }
 
 void Home_PrintDlg::on_testPrintBtn_clicked()
 {
     QString cmd = "DF:DF:DF:DF:DF:1F";
-    bool ret = Printer_BarTender::bulid()->printMAC(cmd);
-    qDebug()<<ret <<endl;
+    mItem->xCodeOffset = ui->CodeXlineEdit->text().toInt();
+    mItem->yCodeOffset = ui->CodeYlineEdit->text().toInt();
+    mItem->xMacOffset = ui->MACXlineEdit->text().toInt();
+    mItem->yMacOffset = ui->MACYlineEdit->text().toInt();
+    Cfg::bulid()->writeOffset();
+
+    bool ret = Printer_BarTender::bulid()->printMAC(cmd , mItem->xCodeOffset , mItem->yCodeOffset, mItem->xMacOffset , mItem->yMacOffset);
+    //qDebug()<<ret <<endl;
 }
 
 void Home_PrintDlg::on_saveBtn_clicked()

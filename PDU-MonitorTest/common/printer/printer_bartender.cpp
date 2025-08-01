@@ -132,10 +132,15 @@ bool Printer_BarTender::RawDataToPrinter(LPSTR szPrinterName, LPBYTE lpData, DWO
     return bStatus;
 }
 
-bool Printer_BarTender::printMAC(QString cmd)
+bool Printer_BarTender::printMAC(QString cmd , int xCodeOffset , int yCodeOffset , int xMacOffset , int yMacOffset)
 {
 //    QString cmd1 = tr("^XA^PW1000^LL800^LH0,0^MD13^PR2^FO250,30^A0,55,55^FD%1^FS^XZ").arg("MAC:"+cmd);
-    QString cmd1 = tr("^XA^PW2000^LL800^LH0,0^MD13^PR2^FO20,5^BY2.5,3,65^BCN,65,N,,,^FD%1^FS^FO225,75^A0,40,40^FD%1^FS^XZ").arg("MAC:"+cmd);
+//    QString cmd1 = tr("^XA^PW2000^LL800^LH0,0^MD13^PR2^FO20,5^BY2.5,3,65^BCN,65,N,,,^FD%1^FS^FO225,75^A0,40,40^FD%1^FS^XZ").arg("MAC:"+cmd);
+//    int x = 20 , y = 5 , x1 = 225 , y1 = 75;
+    int x = xCodeOffset , y = yCodeOffset , x1 = xMacOffset , y1 = yMacOffset;
+    QString cmd1 = tr("^XA^PW2000^LL800^LH0,0^MD13^PR2");
+    QString cmd2 = tr("^FO%2,%3^BY2.5,3,65^BCN,65,N,,,^FD%1^FS^FO%4,%5^A0,40,40^FD%1^FS^XZ").arg("MAC:"+cmd).arg(x).arg(y).arg(x1).arg(y1);
+    cmd1 += cmd2;
     int length = cmd1.length();
     QString printerName = QPrinterInfo::defaultPrinterName();
     bool ret = RawDataToPrinter((LPSTR)printerName.toLocal8Bit().data(),

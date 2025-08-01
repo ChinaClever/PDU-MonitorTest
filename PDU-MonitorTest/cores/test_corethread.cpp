@@ -489,8 +489,8 @@ void Test_CoreThread::workDown()
         if(ret){
             if(mItem->macprinter){
                 if( !this->mMacStr.isEmpty() && (IP_PDU == mDt->devType || IP_PDUV3_SHATE == mItem->ip.version)){
-                    ret = Printer_BarTender::bulid()->printMAC(this->mMacStr);
-                    if(!ret) ret = Printer_BarTender::bulid()->printMAC(this->mMacStr);
+                    ret = Printer_BarTender::bulid()->printMAC(this->mMacStr, mItem->xCodeOffset , mItem->yCodeOffset, mItem->xMacOffset , mItem->yMacOffset);
+                    if(!ret) ret = Printer_BarTender::bulid()->printMAC(this->mMacStr, mItem->xCodeOffset , mItem->yCodeOffset, mItem->xMacOffset , mItem->yMacOffset);
                     if(ret) mLogs->updatePro(tr("MAC标签打印成功"), ret);
                     else mLogs->updatePro(tr("MAC标签打印失败"), ret);
                 }

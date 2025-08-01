@@ -15,6 +15,7 @@ Cfg::Cfg()
     initErrData();
     initCfgDev();
     initCurrentNum();
+    initOffset();
 }
 
 Cfg *Cfg::bulid()
@@ -82,6 +83,22 @@ void Cfg::writeCnt()
     write("all", item->cnt.all, "Cnt");
     write("ok", item->cnt.ok, "Cnt");
     write("err", item->cnt.err, "Cnt");
+}
+
+void Cfg::initOffset()
+{
+    item->xCodeOffset = read("xcodeoffset", 20, "Sys").toInt();
+    item->yCodeOffset = read("ycodeoffset", 5, "Sys").toInt();
+    item->xMacOffset = read("xmacoffset", 225, "Sys").toInt();
+    item->yMacOffset = read("ymacoffset", 75, "Sys").toInt();
+}
+
+void Cfg::writeOffset()
+{
+    write("xcodeoffset", item->xCodeOffset, "Sys");
+    write("ycodeoffset", item->yCodeOffset, "Sys");
+    write("xmacoffset", item->xMacOffset, "Sys");
+    write("ymacoffset", item->yMacOffset, "Sys");
 }
 
 
